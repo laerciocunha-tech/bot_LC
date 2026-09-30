@@ -121,25 +121,47 @@ async def erro_sitef(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             parse_mode="Markdown"
         )
 
+import asyncio
+
 def main():
     TOKEN = "8651236045:AAHPJf9dWkBkEFjAu76E81v2f-bj3qNBUao"
     
-    # Cria a aplicação de forma síncrona/estruturada para o bot
-    app = ApplicationBuilder().token(TOKEN).build()
+    # Função interna para rodar o bot de forma assíncrona controlada
+    async def rodar_bot():
+        app = ApplicationBuilder().token(TOKEN).build()
 
-    # Registra os comandos
-    app.add_handler(CommandHandler("duvida", duvida))
-    app.add_handler(CommandHandler("aplicativos", aplicativos))
-    app.add_handler(CommandHandler("regras", regras))
-    app.add_handler(CommandHandler("links", links))
-    app.add_handler(CommandHandler("textos", textos))
-    app.add_handler(CommandHandler("pdv", pdv))
-    app.add_handler(CommandHandler("erro", erro_sitef))
-   
-    print("🤖 Bot com JSON de erros rodando! Pressione Ctrl+C para parar.")
-    
-    # run_polling gerencia todo o ciclo de vida e o loop do bot de forma segura
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+        # Registra os comandos
+        app.add_handler(CommandHandler("duvida", duvida))
+        app.add_handler(CommandHandler("aplicativos", aplicativos))
+        app.add_handler(CommandHandler("regras", regras))
+        app.add_handler(CommandHandler("links", links))
+        app.add_handler(CommandHandler("textos", textos))
+        app.add_handler(CommandHandler("pdv", pdv))
+        app.add_handler(CommandHandler("erro", erro_sitef))
+       
+        print("🤖 Bot com JSON de erros rodando na nuvem!")
+        
+        # Inicializa e executa o polling manualmente para evitar erros de loop
+        await app.initialize()
+        await app.start()
+        await app.updater.start_polling(allowed_updates=Update.ALL_TYPES)
+        
+        # Mantém o bot ativo indefinidamente
+        await asyncio.Event().wait()
+
+    # Força a criação de um event loop na thread principal caso não exista
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # Se já houver um loop rodando
+            asyncio.run(rodar_bot())
+        else:
+            loop.run_until_complete(rodar_bot())
+    except RuntimeError:
+        # Se nenhum loop existir, cria um novo do zero e define para a thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(rodar_bot())
 
 if __name__ == "__main__":
     main()
