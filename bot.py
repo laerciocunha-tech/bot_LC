@@ -124,6 +124,7 @@ async def erro_sitef(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 def main():
     TOKEN = "8651236045:AAHPJf9dWkBkEFjAu76E81v2f-bj3qNBUao"
     
+    # Cria a aplicação de forma síncrona/estruturada para o bot
     app = ApplicationBuilder().token(TOKEN).build()
 
     # Registra os comandos
@@ -136,7 +137,9 @@ def main():
     app.add_handler(CommandHandler("erro", erro_sitef))
    
     print("🤖 Bot com JSON de erros rodando! Pressione Ctrl+C para parar.")
-    app.run_polling()
+    
+    # run_polling gerencia todo o ciclo de vida e o loop do bot de forma segura
+    app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
     main()
