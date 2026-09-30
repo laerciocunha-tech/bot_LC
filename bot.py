@@ -133,7 +133,7 @@ def main():
     app.add_handler(CommandHandler("links", links))
     app.add_handler(CommandHandler("textos", textos))
     app.add_handler(CommandHandler("pdv", pdv))
-    app.add_handler(CommandHandler("erro", erro_sitef)) # Comando para consultar os erros
+    app.add_handler(CommandHandler("erro", erro_sitef))
    
     print("🤖 Bot com JSON de erros rodando! Pressione Ctrl+C para parar.")
     app.run_polling()
